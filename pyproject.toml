@@ -1,0 +1,78 @@
+[project]
+name = "nexus-social"
+version = "1.0.0"
+description = "Nexus Social: rede social em Django com feed, seguidores, curtidas, comentários e API REST."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [{ name = "Vinícius Takeuchi" }]
+dependencies = [
+    "django>=5.2,<6",
+    "djangorestframework>=3.16",
+    "drf-spectacular>=0.28",
+    "dj-database-url>=2.3",
+    "whitenoise>=6.9",
+    "gunicorn>=23",
+    "pillow>=11",
+    "psycopg[binary]>=3.2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "pytest-django>=4.9",
+    "pytest-cov>=6",
+    "ruff>=0.11",
+    "mypy>=1.15",
+    "django-stubs[compatible-mypy]>=5.2",
+    "djangorestframework-stubs>=3.16",
+]
+
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = []
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "nexus.settings"
+addopts = "-q"
+testpaths = ["tests"]
+filterwarnings = ["error::RuntimeWarning", "ignore:No directory at:UserWarning"]
+
+[tool.coverage.run]
+source = ["nexus", "contas", "publicacoes", "api"]
+omit = ["*/migrations/*", "nexus/wsgi.py", "nexus/asgi.py"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["*/migrations/*"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "DJ", "S", "C4", "RUF"]
+ignore = ["RUF012"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101", "S105", "S106"]
+
+[tool.mypy]
+python_version = "3.12"
+plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main"]
+disallow_untyped_defs = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+no_implicit_optional = true
+exclude = ["migrations/"]
+
+[[tool.mypy.overrides]]
+module = ["dj_database_url.*", "drf_spectacular.*"]
+ignore_missing_imports = true
+
+[tool.django-stubs]
+django_settings_module = "nexus.settings"
+
+[[tool.mypy.overrides]]
+module = ["tests.*"]
+disallow_untyped_defs = false

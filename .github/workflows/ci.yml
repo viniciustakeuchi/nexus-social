@@ -1,0 +1,71 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  qualidade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - name: Lint
+        run: ruff check . && ruff format --check .
+      - name: Tipagem
+        run: mypy .
+      - name: Migrações em dia
+        run: python manage.py makemigrations --check --dry-run
+      - name: Testes (SQLite)
+        run: pytest --cov --cov-report=term-missing --cov-fail-under=95
+
+  postgres:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: nexus
+          POSTGRES_PASSWORD: nexus
+          POSTGRES_DB: nexus
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U nexus"
+          --health-interval 2s --health-timeout 3s --health-retries 15
+    env:
+      DATABASE_URL: postgresql://nexus:nexus@localhost:5432/nexus
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - name: Testes no PostgreSQL
+        run: pytest
+      - name: Aplica e desfaz as migrações
+        run: |
+          python manage.py migrate
+          python manage.py migrate publicacoes zero && python manage.py migrate contas zero
+          python manage.py migrate
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Sobe a aplicação com Docker Compose
+        run: docker compose up --build -d --wait
+      - name: Testa a aplicação rodando
+        run: |
+          curl -fsS http://localhost:8000/saude/
+          curl -fsS http://localhost:8000/ | grep -q "Nexus Social"
+          curl -fsS http://localhost:8000/api/publicacoes/ | grep -q '"count":12'
+      - name: Logs em caso de falha
+        if: failure()
+        run: docker compose logs
+      - run: docker compose down -v

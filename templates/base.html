@@ -1,0 +1,80 @@
+{% load static %}<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#7c3aed">
+  <meta name="description" content="Nexus Social: conecte-se, publique e acompanhe quem você segue.">
+  <title>{% block titulo %}Nexus Social{% endblock %}</title>
+  <link rel="icon" href="{% static 'img/favicon.svg' %}" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/nexus.css' %}">
+</head>
+<body>
+  {% include "parciais/icones.html" %}
+  <header class="topo">
+    <div class="topo__conteudo">
+      <a class="marca" href="{% url 'inicio' %}">{% include "parciais/logo.html" %}<span>Nexus <b>Social</b></span></a>
+      <form class="busca" action="{% url 'explorar' %}" method="get" role="search">
+        <svg class="icone"><use href="#i-busca"/></svg>
+        <label class="visualmente-oculto" for="busca-topo">Buscar</label>
+        <input id="busca-topo" type="search" name="q" value="{{ termo|default:'' }}" placeholder="Buscar pessoas, posts ou #hashtags">
+      </form>
+      <div class="topo__acoes">
+        {% if user.is_authenticated %}
+          <a href="{{ user.get_absolute_url }}" title="Meu perfil">{% include "parciais/avatar.html" with u=user tam="p" %}</a>
+        {% else %}
+          <a class="botao botao--contorno botao--pequeno" href="{% url 'entrar' %}">Entrar</a>
+          <a class="botao botao--pequeno" href="{% url 'cadastro' %}">Criar conta</a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  {% if messages %}
+    <div class="avisos" role="status">
+      {% for m in messages %}<div class="aviso aviso--{{ m.tags }}">{{ m }}</div>{% endfor %}
+    </div>
+  {% endif %}
+
+  {% block conteudo_total %}
+  <div class="pagina{% block classe_pagina %}{% endblock %}">
+    {% if user.is_authenticated %}
+    <nav class="coluna-lateral" aria-label="Principal">
+      <div class="menu">
+        {% url 'inicio' as u_inicio %}{% url 'explorar' as u_explorar %}
+        <a href="{{ u_inicio }}" {% if request.path == u_inicio %}aria-current="page"{% endif %}><svg class="icone"><use href="#i-inicio"/></svg><span>Início</span></a>
+        <a href="{{ u_explorar }}" {% if request.path == u_explorar %}aria-current="page"{% endif %}><svg class="icone"><use href="#i-explorar"/></svg><span>Explorar</span></a>
+        <a href="{{ user.get_absolute_url }}" {% if request.path == user.get_absolute_url %}aria-current="page"{% endif %}><svg class="icone"><use href="#i-perfil"/></svg><span>Perfil</span></a>
+        <a href="{% url 'editar_perfil' %}"><svg class="icone"><use href="#i-editar"/></svg><span>Editar perfil</span></a>
+        <form action="{% url 'sair' %}" method="post">{% csrf_token %}
+          <button class="botao-icone" style="width:100%;justify-content:flex-start;padding:11px 14px;gap:14px;font-size:15px"><svg class="icone"><use href="#i-sair"/></svg><span>Sair</span></button>
+        </form>
+        <a class="botao" href="{% url 'inicio' %}#compositor"><svg class="icone"><use href="#i-mais"/></svg><span>Publicar</span></a>
+      </div>
+    </nav>
+    {% endif %}
+
+    <main class="principal">{% block conteudo %}{% endblock %}</main>
+
+    {% block lateral %}
+    {% if user.is_authenticated %}
+    <aside class="coluna-lateral">{% include "parciais/barra_lateral.html" %}</aside>
+    {% endif %}
+    {% endblock %}
+  </div>
+  {% endblock %}
+
+  {% if user.is_authenticated %}
+  <nav class="barra-inferior" aria-label="Navegação">
+    <a href="{% url 'inicio' %}" {% if request.path == '/' %}aria-current="page"{% endif %} title="Início"><svg class="icone"><use href="#i-inicio"/></svg></a>
+    <a href="{% url 'explorar' %}" {% if request.resolver_match.url_name == 'explorar' %}aria-current="page"{% endif %} title="Explorar"><svg class="icone"><use href="#i-explorar"/></svg></a>
+    <a href="{% url 'inicio' %}#compositor" title="Publicar"><svg class="icone"><use href="#i-mais"/></svg></a>
+    <a href="{{ user.get_absolute_url }}" {% if request.path == user.get_absolute_url %}aria-current="page"{% endif %} title="Perfil"><svg class="icone"><use href="#i-perfil"/></svg></a>
+  </nav>
+  {% endif %}
+  <script src="{% static 'js/nexus.js' %}" defer></script>
+</body>
+</html>

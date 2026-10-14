@@ -1,0 +1,1 @@
+{% if u.avatar %}<img class="avatar avatar--{{ tam|default:'m' }}" src="{{ u.avatar.url }}" alt="Foto de {{ u.nome }}" loading="lazy">{% else %}<span class="avatar avatar--{{ tam|default:'m' }}" aria-hidden="true">{{ u.iniciais }}</span>{% endif %}

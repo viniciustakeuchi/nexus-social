@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block titulo %}Entrar · Nexus Social{% endblock %}
+{% block conteudo_total %}
+<div class="auth">
+  <div class="cartao">
+    <h1>Bem-vindo de volta</h1>
+    <p class="sub">Entre para ver o que sua rede está compartilhando.</p>
+    <form method="post">{% csrf_token %}
+      {% if form.non_field_errors %}<p class="erro" style="margin-bottom:12px">Usuário ou senha incorretos.</p>{% endif %}
+      <input type="hidden" name="next" value="{{ next }}">
+      <div class="campo"><label for="id_username">Nome de usuário</label>{{ form.username }}</div>
+      <div class="campo"><label for="id_password">Senha</label>{{ form.password }}</div>
+      <button class="botao botao--grande">Entrar</button>
+    </form>
+    <p class="troca">Ainda não tem conta? <a href="{% url 'cadastro' %}">Cadastre-se</a></p>
+  </div>
+</div>
+{% endblock %}

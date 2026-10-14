@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block titulo %}{{ titulo }} de @{{ dono.username }} · Nexus Social{% endblock %}
+{% block conteudo %}
+  <section class="cartao">
+    <p style="margin:0"><a href="{{ dono.get_absolute_url }}">← {{ dono.nome }}</a></p>
+    <h1 style="font-size:1.3rem;margin-top:8px">{{ titulo }}</h1>
+    {% for p in pagina %}
+      <div class="pessoa">
+        <a href="{{ p.get_absolute_url }}">{% include "parciais/avatar.html" with u=p %}</a>
+        <div class="pessoa__info"><a href="{{ p.get_absolute_url }}">{{ p.nome }}</a><span>@{{ p.username }}</span></div>
+        {% if user.is_authenticated and user.pk != p.pk %}
+          {% if p.pk in ids_que_sigo %}{% include "parciais/botao_seguir.html" with alvo=p eu_sigo=True %}{% else %}{% include "parciais/botao_seguir.html" with alvo=p eu_sigo=False %}{% endif %}
+        {% endif %}
+      </div>
+    {% empty %}
+      <p class="vazio">Ninguém por aqui ainda.</p>
+    {% endfor %}
+  </section>
+  {% include "parciais/paginacao.html" %}
+{% endblock %}

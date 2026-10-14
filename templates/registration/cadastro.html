@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block titulo %}Criar conta · Nexus Social{% endblock %}
+{% block conteudo_total %}
+<div class="auth">
+  <div class="cartao">
+    <h1>Crie sua conta</h1>
+    <p class="sub">Leva menos de um minuto para entrar no Nexus.</p>
+    <form method="post">{% csrf_token %}
+      {% for campo in form %}{% include "parciais/campo.html" %}{% endfor %}
+      <button class="botao botao--grande">Criar conta</button>
+    </form>
+    <p class="troca">Já tem conta? <a href="{% url 'entrar' %}">Entrar</a></p>
+  </div>
+</div>
+{% endblock %}

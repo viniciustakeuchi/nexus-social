@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block titulo %}{{ dono.nome }} (@{{ dono.username }}) · Nexus Social{% endblock %}
+{% block conteudo %}
+  <section class="cartao perfil">
+    <div class="capa"></div>
+    <div class="perfil__corpo">
+      <div class="perfil__linha">
+        {% include "parciais/avatar.html" with u=dono tam="g" %}
+        {% if user == dono %}
+          <a class="botao botao--contorno botao--pequeno" href="{% url 'editar_perfil' %}">Editar perfil</a>
+        {% elif user.is_authenticated %}
+          {% include "parciais/botao_seguir.html" with alvo=dono %}
+        {% endif %}
+      </div>
+      <h1>{{ dono.nome }}</h1>
+      <div class="user">@{{ dono.username }} · entrou em {{ dono.date_joined|date:"F \d\e Y"|lower }}</div>
+      {% if dono.bio %}<p class="bio">{{ dono.bio }}</p>{% endif %}
+      <div class="perfil__numeros" style="margin-top:12px">
+        <span><b>{{ total_publicacoes }}</b> publicações</span>
+        <a href="{% url 'seguidores' dono.username %}"><b data-seguidores>{{ total_seguidores }}</b> seguidores</a>
+        <a href="{% url 'seguindo' dono.username %}"><b>{{ total_seguindo }}</b> seguindo</a>
+      </div>
+    </div>
+  </section>
+  {% if form %}{% include "parciais/compositor.html" %}{% endif %}
+  {% include "parciais/lista_publicacoes.html" with vazio="Ainda não há publicações." %}
+{% endblock %}

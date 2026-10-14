@@ -1,0 +1,6 @@
+{% for pub in pagina %}
+  {% include "parciais/publicacao.html" %}
+{% empty %}
+  <div class="cartao vazio"><svg class="icone"><use href="#i-rede"/></svg>{{ vazio|default:"Nada por aqui ainda." }}</div>
+{% endfor %}
+{% include "parciais/paginacao.html" %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block conteudo_total %}
+<section class="hero">
+  <div class="hero__conteudo">
+    <div>
+      <h1>Onde as suas <em>conexões</em> ganham vida.</h1>
+      <p class="hero__lead">O Nexus Social reúne pessoas, ideias e conversas num só lugar. Publique, siga quem inspira você e descubra o que está em alta.</p>
+      <div class="hero__acoes">
+        <a class="botao botao--claro botao--grande" href="{% url 'cadastro' %}">Criar minha conta</a>
+        <a class="botao botao--contorno botao--grande" href="{% url 'explorar' %}">Explorar</a>
+      </div>
+      <div class="hero__numeros">
+        <span><b>{{ total_usuarios }}</b>pessoas</span>
+        <span><b>{{ total_publicacoes }}</b>publicações</span>
+      </div>
+    </div>
+    <div class="hero__vitrine" aria-hidden="true">
+      {% for pub in destaques %}{% include "parciais/publicacao.html" %}{% endfor %}
+    </div>
+  </div>
+</section>
+<section class="recursos">
+  <div class="cartao recurso"><svg class="icone"><use href="#i-rede"/></svg><h3>Sua rede, seu feed</h3><p>Siga pessoas e veja no início só o que vem delas, em ordem cronológica, sem algoritmo escondido.</p></div>
+  <div class="cartao recurso"><svg class="icone"><use href="#i-hashtag"/></svg><h3>Hashtags e menções</h3><p>Entre em conversas com #hashtags, chame alguém com @menções e acompanhe o que está em alta.</p></div>
+  <div class="cartao recurso"><svg class="icone"><use href="#i-codigo"/></svg><h3>API aberta</h3><p>Tudo o que dá para fazer no site também dá pela API REST documentada em OpenAPI.</p></div>
+</section>
+<p class="rodape">Nexus Social · <a href="/api/docs/">Documentação da API</a></p>
+{% endblock %}

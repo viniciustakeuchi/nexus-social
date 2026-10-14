@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block titulo %}Editar perfil · Nexus Social{% endblock %}
+{% block conteudo %}
+  <section class="cartao">
+    <h1 style="font-size:1.3rem">Editar perfil</h1>
+    <form method="post" enctype="multipart/form-data">{% csrf_token %}
+      <div class="pessoa" style="margin-bottom:16px">
+        {% include "parciais/avatar.html" with u=user tam="g" %}
+        <div class="campo" style="margin:0">
+          <label for="{{ form.avatar.id_for_label }}">Foto de perfil</label>
+          {{ form.avatar }}
+          <span class="ajuda">PNG ou JPG, até 2 MB.</span>
+          {{ form.avatar.errors }}
+        </div>
+      </div>
+      {% include "parciais/campo.html" with campo=form.nome_exibicao %}
+      {% include "parciais/campo.html" with campo=form.bio %}
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <a class="botao botao--fantasma" href="{{ user.get_absolute_url }}">Cancelar</a>
+        <button class="botao">Salvar</button>
+      </div>
+    </form>
+  </section>
+{% endblock %}

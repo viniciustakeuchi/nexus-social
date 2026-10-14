@@ -1,0 +1,14 @@
+<form id="compositor" class="cartao compositor" method="post" action="{% url 'publicar' %}" enctype="multipart/form-data">{% csrf_token %}
+  <input type="hidden" name="proximo" value="{{ request.get_full_path }}">
+  {% include "parciais/avatar.html" with u=user %}
+  <div>
+    <label class="visualmente-oculto" for="{{ form.texto.id_for_label }}">Texto da publicação</label>
+    {{ form.texto }}
+    <div class="previa" data-previa><img alt="Prévia da imagem"></div>
+    <div class="compositor__rodape">
+      <span class="botao-icone anexo" title="Adicionar imagem"><svg class="icone"><use href="#i-imagem"/></svg>Imagem{{ form.imagem }}</span>
+      <span class="contador" data-contador-saida>0/500</span>
+      <button class="botao botao--pequeno" type="submit">Publicar</button>
+    </div>
+  </div>
+</form>

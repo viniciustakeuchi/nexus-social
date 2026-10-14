@@ -1,0 +1,35 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: nexus
+      POSTGRES_PASSWORD: nexus
+      POSTGRES_DB: nexus
+    volumes:
+      - dados-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nexus"]
+      interval: 2s
+      timeout: 3s
+      retries: 15
+
+  web:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://nexus:nexus@db:5432/nexus
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-troque-esta-chave-em-producao-0123456789abcdef}
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
+      DJANGO_COOKIES_SEGUROS: "false"
+      DJANGO_SERVIR_MIDIA: "true"
+      POPULAR_DEMO: ${POPULAR_DEMO:-true}
+    ports:
+      - "8000:8000"
+    volumes:
+      - midia:/dados/media
+
+volumes:
+  dados-postgres:
+  midia:

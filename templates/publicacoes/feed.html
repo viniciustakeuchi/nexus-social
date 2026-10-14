@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block titulo %}Início · Nexus Social{% endblock %}
+{% block conteudo %}
+  {% include "parciais/compositor.html" %}
+  {% include "parciais/lista_publicacoes.html" with vazio="Seu feed está vazio. Publique algo ou siga pessoas em Explorar." %}
+{% endblock %}

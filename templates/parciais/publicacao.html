@@ -1,0 +1,27 @@
+{% load nexus %}
+<article class="cartao publicacao" id="p{{ pub.pk }}">
+  <a href="{{ pub.autor.get_absolute_url }}">{% include "parciais/avatar.html" with u=pub.autor %}</a>
+  <div>
+    <div class="publicacao__topo">
+      <a class="publicacao__nome" href="{{ pub.autor.get_absolute_url }}">{{ pub.autor.nome }}</a>
+      <span class="publicacao__user">@{{ pub.autor.username }}</span>
+      <span class="publicacao__tempo">· <a href="{{ pub.get_absolute_url }}" style="color:inherit"><time datetime="{{ pub.criada_em|date:'c' }}" title="{{ pub.criada_em|date:'d/m/Y H:i' }}">{{ pub.criada_em|tempo_relativo }}</time></a></span>
+    </div>
+    <p class="publicacao__texto">{{ pub.texto|enriquecer }}</p>
+    {% if pub.imagem %}<a href="{{ pub.get_absolute_url }}"><img class="publicacao__imagem" src="{{ pub.imagem.url }}" alt="Imagem da publicação" loading="lazy"></a>{% endif %}
+    <div class="publicacao__acoes">
+      <form method="post" action="{% url 'curtir' pub.pk %}" data-js="curtir">{% csrf_token %}
+        <input type="hidden" name="proximo" value="{{ request.get_full_path }}#p{{ pub.pk }}">
+        <button class="botao-icone curtir{% if pub.curtida_por_mim %} ativo{% endif %}" aria-pressed="{{ pub.curtida_por_mim|yesno:'true,false' }}" title="Curtir">
+          <svg class="icone"><use href="#i-coracao"/></svg><span data-total>{{ pub.total_curtidas }}</span>
+        </button>
+      </form>
+      <a class="botao-icone" href="{{ pub.get_absolute_url }}#comentarios" title="Comentários"><svg class="icone"><use href="#i-comentario"/></svg><span>{{ pub.total_comentarios }}</span></a>
+      {% if user.pk == pub.autor_id %}
+      <form class="direita" method="post" action="{% url 'excluir_publicacao' pub.pk %}" data-confirmar="Excluir esta publicação?">{% csrf_token %}
+        <button class="botao-icone botao-icone--perigo" title="Excluir"><svg class="icone"><use href="#i-lixo"/></svg></button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+</article>

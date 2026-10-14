@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block titulo %}{% if termo %}{{ termo }} · {% endif %}Explorar · Nexus Social{% endblock %}
+{% block conteudo %}
+  <section class="cartao">
+    <h1 style="font-size:1.3rem">{% if termo %}Resultados para “{{ termo }}”{% else %}Explorar{% endif %}</h1>
+    <form action="{% url 'explorar' %}" method="get" class="comentar" role="search">
+      <label class="visualmente-oculto" for="busca-explorar">Buscar</label>
+      <input id="busca-explorar" class="entrada" type="search" name="q" value="{{ termo }}" placeholder="Buscar pessoas, posts ou #hashtags">
+      <button class="botao botao--pequeno">Buscar</button>
+    </form>
+  </section>
+  {% if pessoas %}
+  <section class="cartao">
+    <h2 class="cartao__titulo">Pessoas</h2>
+    {% for p in pessoas %}
+      <div class="pessoa">
+        <a href="{{ p.get_absolute_url }}">{% include "parciais/avatar.html" with u=p tam="p" %}</a>
+        <div class="pessoa__info"><a href="{{ p.get_absolute_url }}">{{ p.nome }}</a><span>@{{ p.username }}</span></div>
+      </div>
+    {% endfor %}
+  </section>
+  {% endif %}
+  {% include "parciais/lista_publicacoes.html" with vazio="Nenhuma publicação encontrada." %}
+{% endblock %}
+{% block lateral %}
+<aside class="coluna-lateral">
+  {% if hashtags_em_alta %}
+  <section class="cartao">
+    <h2 class="cartao__titulo">Em alta</h2>
+    <div class="tags">
+      {% for tag, n in hashtags_em_alta %}<a class="tag" href="?q=%23{{ tag|urlencode }}">#{{ tag }}<small>{{ n }}</small></a>{% endfor %}
+    </div>
+  </section>
+  {% endif %}
+  <section class="cartao">
+    <h2 class="cartao__titulo">Mais seguidos</h2>
+    {% for p in mais_seguidos %}
+      <div class="pessoa">
+        <a href="{{ p.get_absolute_url }}">{% include "parciais/avatar.html" with u=p tam="p" %}</a>
+        <div class="pessoa__info"><a href="{{ p.get_absolute_url }}">{{ p.nome }}</a><span>{{ p.n }} seguidor{{ p.n|pluralize:"es" }}</span></div>
+      </div>
+    {% empty %}<p style="margin:0;color:var(--texto-2)">Ninguém por aqui ainda.</p>
+    {% endfor %}
+  </section>
+</aside>
+{% endblock %}

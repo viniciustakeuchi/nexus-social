@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block titulo %}Página não encontrada · Nexus Social{% endblock %}
+{% block conteudo_total %}
+<div class="auth">
+  <div class="cartao" style="text-align:center">
+    <h1 style="font-size:3rem;background:var(--gradiente);-webkit-background-clip:text;background-clip:text;color:transparent">404</h1>
+    <p class="sub">Essa conexão não existe (ou foi desfeita).</p>
+    <a class="botao" href="{% url 'inicio' %}">Voltar ao início</a>
+  </div>
+</div>
+{% endblock %}

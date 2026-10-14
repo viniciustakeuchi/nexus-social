@@ -1,0 +1,19 @@
+{% with sugestoes=sugestoes_para_seguir %}
+{% if sugestoes %}
+<section class="cartao">
+  <h2 class="cartao__titulo">Quem seguir</h2>
+  {% for p in sugestoes %}
+    <div class="pessoa">
+      <a href="{{ p.get_absolute_url }}">{% include "parciais/avatar.html" with u=p tam="p" %}</a>
+      <div class="pessoa__info"><a href="{{ p.get_absolute_url }}">{{ p.nome }}</a><span>@{{ p.username }}</span></div>
+      {% include "parciais/botao_seguir.html" with alvo=p eu_sigo=False %}
+    </div>
+  {% endfor %}
+</section>
+{% endif %}
+{% endwith %}
+<section class="cartao">
+  <h2 class="cartao__titulo">Sobre o Nexus</h2>
+  <p style="margin:0;color:var(--texto-2);font-size:.9rem">Uma rede para conectar pessoas e ideias. Use <b>#hashtags</b> para entrar em conversas e <b>@menções</b> para chamar alguém.</p>
+</section>
+<p class="rodape">Nexus Social · <a href="/api/docs/">API</a></p>

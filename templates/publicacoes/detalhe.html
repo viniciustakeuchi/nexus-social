@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load nexus %}
+{% block titulo %}{{ publicacao.autor.nome }}: “{{ publicacao.texto|truncatechars:50 }}” · Nexus Social{% endblock %}
+{% block conteudo %}
+  {% include "parciais/publicacao.html" with pub=publicacao %}
+  <section class="cartao" id="comentarios">
+    <h2 class="cartao__titulo">Comentários ({{ comentarios|length }})</h2>
+    {% if user.is_authenticated %}
+    <form class="comentar" method="post" action="{% url 'comentar' publicacao.pk %}" style="margin-bottom:8px">{% csrf_token %}
+      {% include "parciais/avatar.html" with u=user tam="p" %}
+      <label class="visualmente-oculto" for="{{ form.texto.id_for_label }}">Comentário</label>
+      {{ form.texto.as_widget }}
+      <button class="botao botao--pequeno">Comentar</button>
+    </form>
+    {% else %}
+    <p style="color:var(--texto-2)"><a href="{% url 'entrar' %}?next={{ request.path }}">Entre</a> para comentar.</p>
+    {% endif %}
+    {% for c in comentarios %}
+      <div class="comentario">
+        <a href="{{ c.autor.get_absolute_url }}">{% include "parciais/avatar.html" with u=c.autor tam="p" %}</a>
+        <div>
+          <a class="publicacao__nome" href="{{ c.autor.get_absolute_url }}">{{ c.autor.nome }}</a>
+          <span class="publicacao__tempo">· {{ c.criado_em|tempo_relativo }}</span>
+          <p>{{ c.texto|enriquecer }}</p>
+        </div>
+        {% if user.pk == c.autor_id or user.pk == publicacao.autor_id %}
+        <form method="post" action="{% url 'excluir_comentario' c.pk %}" data-confirmar="Excluir este comentário?">{% csrf_token %}
+          <button class="botao-icone botao-icone--perigo" title="Excluir comentário"><svg class="icone"><use href="#i-lixo"/></svg></button>
+        </form>
+        {% endif %}
+      </div>
+    {% empty %}
+      <p style="color:var(--texto-3);margin:0">Seja o primeiro a comentar.</p>
+    {% endfor %}
+  </section>
+{% endblock %}

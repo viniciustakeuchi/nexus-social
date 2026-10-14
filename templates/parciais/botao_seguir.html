@@ -1,0 +1,4 @@
+<form method="post" action="{% url 'seguir' alvo.username %}" data-js="seguir">{% csrf_token %}
+  <input type="hidden" name="proximo" value="{{ request.get_full_path }}">
+  <button class="botao botao--pequeno {% if eu_sigo %}botao--contorno seguindo{% endif %}" data-seguir="Seguir" data-seguindo="Seguindo">{% if eu_sigo %}Seguindo{% else %}Seguir{% endif %}</button>
+</form>
